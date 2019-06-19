@@ -1,4 +1,4 @@
-from django.conf.settings import DATABASE_CSA, DATABASES
+from django.conf import settings
 
 from sqlalchemy import create_engine, MetaData, Table, Column, ForeignKey
 from sqlalchemy.orm import Session
@@ -8,24 +8,24 @@ from csa.models import (CARRIERA_DOCENTE_FIELDS_MAP,
                         CARRIERA_FIELDS_MAP,
                         INCARICHI_FIELDS_MAP)
 
-engine = create_engine("oracle://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}".format(**DATABASE_CSA))
+engine = create_engine("oracle://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}".format(**settings.DATABASE_CSA))
 metadata = MetaData()
-anagrafica = Table('V_ANAGRAFICA', metadata, autoload=True, autoload_with=engine)
-ruolo = Table('V_RUOLO', metadata, autoload=True, autoload_with=engine)
-carriera = Table('V_CARRIERA', metadata, autoload=True, autoload_with=engine)
-carriera_docente = Table('V_CARRIERA_DOCENTI', metadata, autoload=True, autoload_with=engine)
-incarico = Table('V_INCARICO_DIP', metadata, autoload=True, autoload_with=engine)
+anagrafica = Table(settings.CSA_V_ANAGRAFICA, metadata, autoload=True, autoload_with=engine)
+ruolo = Table(settings.CSA_V_RUOLO, metadata, autoload=True, autoload_with=engine)
+carriera = Table(settings.CSA_V_CARRIERA, metadata, autoload=True, autoload_with=engine)
+carriera_docente = Table(settings.CSA_V_CARRIERA_DOCENTI, metadata, autoload=True, autoload_with=engine)
+incarico = Table(settings.CSA_V_INCARICO_DIP, metadata, autoload=True, autoload_with=engine)
 # creo una sessione orm
 session = Session(engine)
 
 # repliche
-engine_repl = create_engine("mysql://{USER}:{PASSWORD}@{HOST}/{NAME}".format(**DATABASES['default']))
+engine_repl = create_engine("mysql://{USER}:{PASSWORD}@{HOST}/{NAME}".format(**settings.DATABASES['default']))
 metadata_repl = MetaData()
-anagrafica_repl = Table('V_ANAGRAFICA', metadata_repl, autoload=True, autoload_with=engine_repl)
-ruolo_repl = Table('V_RUOLO', metadata_repl, autoload=True, autoload_with=engine_repl)
-carriera_repl = Table('V_CARRIERA', metadata_repl, autoload=True, autoload_with=engine_repl)
-carriera_docente_repl = Table('V_CARRIERA_DOCENTI', metadata_repl, autoload=True, autoload_with=engine_repl)
-incarico_repl = Table('V_INCARICO_DIP', metadata_repl, autoload=True, autoload_with=engine_repl)
+anagrafica_repl = Table(settings.CSA_V_ANAGRAFICA, metadata_repl, autoload=True, autoload_with=engine_repl)
+ruolo_repl = Table(settings.CSA_V_RUOLO, metadata_repl, autoload=True, autoload_with=engine_repl)
+carriera_repl = Table(settings.CSA_V_CARRIERA, metadata_repl, autoload=True, autoload_with=engine_repl)
+carriera_docente_repl = Table(settings.CSA_V_CARRIERA_DOCENTI, metadata_repl, autoload=True, autoload_with=engine_repl)
+incarico_repl = Table(settings.CSA_V_INCARICO_DIP, metadata_repl, autoload=True, autoload_with=engine_repl)
 session_repl = Session(engine_repl)
 
 

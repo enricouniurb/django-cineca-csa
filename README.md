@@ -1,5 +1,7 @@
-Cineca CSA
-----------
+CINECA CSA Interface
+--------------------
+
+App per Django Framework che consente di interfacciarsi al database di CINECA CSA
 
 #### Oracle dblink setup
 Scarica il client Oracle e installalo come utente root:
@@ -10,21 +12,50 @@ ldconfig
 
 ````
 Per personalizzare le colonne delle tabelle/viste provenienti da CINECA CSA
-bisogna ereditare l'app csa o modificarne il contenuto in csa.models.py.
+bisogna ereditare l'app o modificare il contenuto in models.py.
 
 I dati da CSA possono essere usati in due modi, lettura diretta (con cache)
-oppure copia dati su tabelle locali. Consultare django_peo/settings.py
-per gli esempi di configurazione.
+oppure copia dati su tabelle locali.
+La configurazione deve essere integrata nel settings.py del progetto.
+Esempio di configurazione:
+
+````
+# CSA settings
+CSA_V_ANAGRAFICA = 'V_ANAGRAFICA'
+CSA_V_CARRIERA = 'V_CARRIERA'
+CSA_V_CARRIERA_DOCENTI = 'V_CARRIERA_DOCENTI'
+CSA_V_INCARICO_DIP = 'V_INCARICO_DIP'
+CSA_V_RUOLO = 'V_RUOLO'
+
+CSA_SQL_QUERY = 'SELECT * FROM {} where matricola={} ORDER BY {} DESC'
+
+DATABASE_CSA = {
+                # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+                'ENGINE': 'django.db.backends.oracle',
+                'NAME': 'xe',
+                'USER': 'USERNAME',
+                'PASSWORD': 'PASSWD',
+                'HOST': 'SERVER_HOST',
+                'PORT': '1521',
+                }
+
+if 'csa' in INSTALLED_APPS:
+    # if replica a scheduled sqlscript must replicate datas in default DB
+    CSA_MODE = 'replica' # or 'native'
+
+    if CSA_MODE == 'native':
+        DATABASES['csa'] = DATABASE_CSA
+        DATABASE_ROUTERS = ['csa.routers.ReadOnlyDbRouter',]
+    elif CSA_MODE == 'replica':
+        CSA_REPL_SCRIPT = 'csa.sqlalchemy_repl'
+    else:
+        raise Exception('CSA_MODE non configured in settings.py')
+````
 
 #### Nota su CINECA CSA
 
-Il sistema PEO non dipende da CINECA CSA ma usa questo per allineare i dati.
-Questo significa che puoi allineare/creare/gestire i tuoi dati come meglio preferisci.
-Ti conviene mantenere la struttura del modello dati così come esposto in csa/models.py
-per evitare di dover apporre modifiche.
-
 Se le colonne del tuo DB dovessero chiamarsi diversamente rispetto a CSA, puoi modificare il
-mapping in csa/models.py, modifica solo i valori e non le chiavi per garantire il funzionamento del codice:
+mapping in models.py, modifica solo i valori e non le chiavi per garantire il funzionamento del codice:
 
 ````
 CARRIERA_FIELDS_MAP = {'descr_aff_org': 'ds_aff_org',

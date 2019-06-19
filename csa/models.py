@@ -3,6 +3,7 @@ from django.core.cache import cache
 from django.db import models
 from collections import OrderedDict
 
+
 RUOLI = [('ND', 'ND - Personale non docente'),
          ('DC', 'DC - Dirigente a contratto'),
          ('NB', 'NB - ND Centro Residenziale'),
@@ -70,10 +71,10 @@ class V_ANAGRAFICA(models.Model):
     cod_fis = models.CharField('Codice Fiscale', max_length=16, blank=False, null=False)
 
     class Meta:
-        db_table = 'V_ANAGRAFICA'
+        db_table = settings.CSA_V_ANAGRAFICA
         ordering = ['cognome',]
         # no database table creation or deletion operations will be performed for this model
-        if settings.CSA_MODE == 'native':
+        if settings.CSA_MODE == settings.CSA_NATIVE:
             managed = False
         verbose_name = 'Anagrafica'
         verbose_name_plural = 'Anagrafiche'
@@ -84,8 +85,9 @@ class V_ANAGRAFICA(models.Model):
         csa_cache = cache.get(cache_name)
         if csa_cache: return csa_cache
         # per dipendenti
-        q = 'SELECT * FROM V_CARRIERA where matricola={} ORDER BY {} DESC'.format(self.matricola,
-                                                                                  CARRIERA_FIELDS_MAP['data_inizio'])
+        q = settings.CSA_SQL_QUERY.format(settings.CSA_V_CARRIERA,
+                                          self.matricola,
+                                          CARRIERA_FIELDS_MAP['data_inizio'])
         carriere = V_ANAGRAFICA.objects.raw(q)
         c = []
         for carriera in carriere:
@@ -102,8 +104,9 @@ class V_ANAGRAFICA(models.Model):
         csa_cache = cache.get(cache_name)
         if csa_cache: return csa_cache
         # per docenti
-        q = 'SELECT * FROM V_CARRIERA_DOCENTI where matricola={} ORDER BY {} DESC'.format(self.matricola,
-                                                                                          CARRIERA_DOCENTE_FIELDS_MAP['data_inizio'])
+        q = settings.CSA_SQL_QUERY.format(settings.CSA_V_CARRIERA_DOCENTI,
+                                          self.matricola,
+                                          CARRIERA_DOCENTE_FIELDS_MAP['data_inizio'])
         carriere = V_ANAGRAFICA.objects.raw(q)
         c = []
         for carriera in carriere:
@@ -118,8 +121,9 @@ class V_ANAGRAFICA(models.Model):
         cache_name = '{}_{}'.format(_get_matricola(self.matricola), 'incarichi_csa')
         csa_cache = cache.get(cache_name)
         if csa_cache: return csa_cache
-        q = 'SELECT * FROM V_INCARICO_DIP where matricola={} ORDER BY {} DESC'.format(self.matricola,
-                                                                                      INCARICHI_FIELDS_MAP['data_inizio'])
+        q = settings.CSA_SQL_QUERY.format(settings.CSA_V_INCARICO_DIP,
+                                          self.matricola,
+                                          INCARICHI_FIELDS_MAP['data_inizio'])
         incarichi = V_ANAGRAFICA.objects.raw(q)
         c = []
         for incarico in incarichi:
@@ -145,9 +149,9 @@ class V_RUOLO(models.Model):
     is_docente = models.NullBooleanField(default=False)
 
     class Meta:
-        db_table = 'V_RUOLO'
+        db_table = settings.CSA_V_RUOLO
         # no database table creation or deletion operations will be performed for this model
-        if settings.CSA_MODE == 'native':
+        if settings.CSA_MODE == settings.CSA_NATIVE:
             managed = False
         verbose_name = 'Ruolo'
         verbose_name_plural = 'Ruoli'
@@ -156,9 +160,9 @@ class V_RUOLO(models.Model):
         return '{} - {} {}'.format(self.ruolo, self.tipo_ruolo, self.descr)
 
 
-# niente da fare, non ho chiavi primarie dalle viste in 'native' mode.
+# non ho chiavi primarie dalle viste in 'native' mode.
 # mentre in replica posso sfruttarle
-if settings.CSA_MODE == 'replica':
+if settings.CSA_MODE == settings.CSA_REPLICA:
     class V_CARRIERA(models.Model):
         """
         Configurazione Oracle view
@@ -175,7 +179,7 @@ if settings.CSA_MODE == 'replica':
         dt_rap_ini = models.DateTimeField(blank=True, null=True)
         attivita = models.CharField(max_length=254, blank=True, null=True)
         class Meta:
-            db_table = 'V_CARRIERA'
+            db_table = settings.CSA_V_CARRIERA
             verbose_name = 'Carriera'
             verbose_name_plural = 'Carriere'
 
@@ -214,7 +218,7 @@ if settings.CSA_MODE == 'replica':
         scatti = models.BooleanField(default=0)
 
         class Meta:
-            db_table = 'V_CARRIERA_DOCENTI'
+            db_table = settings.CSA_V_CARRIERA_DOCENTI
             verbose_name = 'Carriera Docente'
             verbose_name_plural = 'Carriere Docenti'
 
@@ -238,7 +242,7 @@ if settings.CSA_MODE == 'replica':
         dt_fin = models.DateTimeField(blank=True, null=True)
 
         class Meta:
-            db_table = 'V_INCARICO_DIP'
+            db_table = settings.CSA_V_INCARICO_DIP
             verbose_name = 'Incarichi'
             verbose_name_plural = 'Incarichi'
 
