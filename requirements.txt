@@ -1,0 +1,5 @@
+# Oracle CSA support
+cx_Oracle
+
+# SQL Alchemy
+sqlalchemy
