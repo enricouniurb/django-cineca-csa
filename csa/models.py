@@ -58,6 +58,9 @@ INCARICHI_FIELDS_MAP = {'data_doc': 'data_doc',
 def _get_matricola(matricola):
     return matricola.zfill(6)
 
+class CustomManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(cd_ruolo='ND')
 
 class V_ANAGRAFICA(models.Model):
     """
@@ -69,6 +72,8 @@ class V_ANAGRAFICA(models.Model):
     matricola = models.CharField(max_length=6, primary_key=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
     cod_fis = models.CharField('Codice Fiscale', max_length=16, blank=False, null=False)
+
+    objects = CustomManager()
 
     class Meta:
         db_table = settings.CSA_V_ANAGRAFICA
