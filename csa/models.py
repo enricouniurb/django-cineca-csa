@@ -49,8 +49,8 @@ INCARICHI_FIELDS_MAP = {'data_doc': 'data_doc',
                         'num_doc': 'num_doc',
                         'tipo_doc': 'tipo_doc',
                         'descr_tipo': 'des_tipo',
-                        'data_inizio':   'dt_ini',
-                        'data_fine':     'dt_fin',
+                        'data_inizio':   'decorrenza',
+                        'data_fine':     'termine',
                         'relaz_accomp': 'relaz_accomp',
                         'ruolo': 'ruolo'}
 
