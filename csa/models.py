@@ -146,7 +146,7 @@ class V_RUOLO(models.Model):
     comparto = models.CharField(max_length=1, blank=True, null=True)
     tipo_ruolo = models.CharField(max_length=2, blank=False, null=False)
     descr = models.CharField(max_length=254, blank=True, null=True)
-    is_docente = models.NullBooleanField(default=False)
+    # is_docente = models.NullBooleanField(default=False)
 
     class Meta:
         db_table = settings.CSA_V_RUOLO
