@@ -67,7 +67,7 @@ class V_ANAGRAFICA_Admin(CustomReadOnlyModelAdmin):
     get_incarichi_csa.short_description = 'Incarichi presenti in CSA'
 
     def get_carriera_csa(self, obj):
-        d = obj.get_carriera_docente_view() or obj.get_carriera_view()
+        d = obj.get_carriera_view() #obj.get_carriera_docente_view() or
         if not d: return ''
         html_rows = []
         for i in d[0].keys():
