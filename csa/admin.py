@@ -41,7 +41,7 @@ class CustomReadOnlyModelAdmin(admin.ModelAdmin):
 
 @admin.register(V_ANAGRAFICA)
 class V_ANAGRAFICA_Admin(CustomReadOnlyModelAdmin):
-    list_display = ('matricola', 'nome', 'cognome', 'email',)
+    list_display = ('matricola', 'nome', 'cognome', 'email', 'cd_ruolo')
     search_fields = ('email', 'matricola', 'cognome', 'nome')
     readonly_fields = ('get_incarichi_csa', 'get_carriera_csa')
 
