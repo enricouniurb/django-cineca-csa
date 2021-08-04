@@ -25,7 +25,8 @@ CARRIERA_FIELDS_MAP = {'descr_aff_org': 'ds_aff_org',
                        'data_inizio':   'dt_ini',
                        'data_fine':     'dt_fin',
                        'inquadramento': 'inquadr',
-                       'ruolo': 'ruolo'}
+                       'ruolo': 'ruolo',
+                       'data_avanzamento': 'dt_avanz'}
 
 # per i docenti invence rimuoviamo gli attributi inutili e aggiungiamo quelli specifici
 CARRIERA_DOCENTE_FIELDS_MAP = CARRIERA_FIELDS_MAP.copy()
