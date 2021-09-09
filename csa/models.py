@@ -94,7 +94,7 @@ class V_ANAGRAFICA(models.Model):
         csa_cache = cache.get(cache_name)
         if csa_cache: return csa_cache
         # per dipendenti
-        q = "SELECT * FROM {} where matricola={} and ruolo in ('ND','NM') ORDER BY {} DESC".format(settings.CSA_V_CARRIERA,
+        q = settings.CSA_SQL_QUERY.format(settings.CSA_V_CARRIERA,
                                           self.matricola,                                          
                                           CARRIERA_FIELDS_MAP['data_inizio'])
         carriere = V_ANAGRAFICA.objects.raw(q)
